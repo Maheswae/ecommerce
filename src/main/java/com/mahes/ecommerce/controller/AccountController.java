@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mahes.ecommerce.model.Account;
-import com.mahes.ecommerce.service.MainService;
+import com.mahes.ecommerce.service.AccountService;
 
 @RestController
 @RequestMapping(value="/account")
 public class AccountController {
 	
 	@Autowired
-	MainService service; 
+	AccountService service; 
 	
 	@PostMapping
 	public Account createAccount(@RequestBody Account account) {

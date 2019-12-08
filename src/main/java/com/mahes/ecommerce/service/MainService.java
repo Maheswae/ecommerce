@@ -19,7 +19,6 @@ import com.mahes.ecommerce.model.Item;
 import com.mahes.ecommerce.model.Orders;
 
 @Service
-@Transactional
 public class MainService {
 	@Autowired
 	AccountRepo accountRepo;
@@ -30,21 +29,28 @@ public class MainService {
 	@Autowired
 	InventoryRepo inventoryRepo;
 	
-	public Account createAccount(Account ac) {
-		return accountRepo.save(ac);
-	} 
+	@Autowired
+	AccountService accountService;
+	
 	
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = EcommerceException.class)
 	public Integer createOrder(Orders order) throws EcommerceException {
 		if (order.getAccount() == null) {
 			throw new EcommerceException("Account Not Found");
 		}
-		Optional<Account> accountnw = accountRepo.findById(order.getAccount().getId());
-		Account account = accountnw.isPresent() ? accountnw.get() : null;
-		if (account == null) {
-			throw new EcommerceException("Account Not Valid");
-		} else {
+		Account account= null;
+		if(order.getAccount().getId() == null) {
+			account = accountService.createAccount(order.getAccount());
 			order.setAccount(account);
+		} else {
+			Optional<Account> accountnw = accountRepo.findById(order.getAccount().getId());
+			account = accountnw.isPresent() ? accountnw.get() : null;
+			if (account == null) {
+				account = accountService.createAccount(order.getAccount());
+				order.setAccount(account);
+			} else {
+				order.setAccount(account);
+			}			
 		}
 		Inventory inventoryItem = null;
 		for (Item item : order.getItems()) {
@@ -56,6 +62,7 @@ public class MainService {
 			}
 		} 
 		return orderRepo.save(order).getOrderId();
-	} 
+	}
+	
 	
 }

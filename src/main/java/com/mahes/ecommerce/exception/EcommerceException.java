@@ -1,6 +1,6 @@
 package com.mahes.ecommerce.exception;
 
-public class EcommerceException extends Exception{
+public class EcommerceException extends RuntimeException{
 	String message;
 	public EcommerceException() {
 		super();
