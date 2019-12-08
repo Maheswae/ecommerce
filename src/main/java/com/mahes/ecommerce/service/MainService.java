@@ -32,7 +32,14 @@ public class MainService {
 	@Autowired
 	AccountService accountService;
 	
-	
+	/**
+	 * before saving the order I am creating the account in DB and after I we checking the items with inventory 
+	 * and after that we are placing the order. I am always saving the new account if it does not exits in DB regardless 
+	 * of any exception arise.   
+	 * @param order
+	 * @return
+	 * @throws EcommerceException
+	 */
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = EcommerceException.class)
 	public Integer createOrder(Orders order) throws EcommerceException {
 		if (order.getAccount() == null) {
